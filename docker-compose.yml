@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8081:80
+    depends_on:
+      - source-mariadb
+    links:
+      - source-mariadb:db
+    networks:
+      - dev-env
+  source-mariadb:
+    build: "./mariadb-docker/"
+    container_name: source-mariadb
+    restart: always
+    command:
+      - --sql_mode=
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=test
+      - MARIADB_DATABASE=vsico_api
+    volumes:
+      - ./dbinit:/docker-entrypoint-initdb.d/
+    networks:
+      - dev-env
+networks:
+  dev-env: {}
