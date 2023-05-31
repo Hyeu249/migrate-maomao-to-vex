@@ -74,6 +74,11 @@ debug@^4.3.3:
   dependencies:
     ms "2.1.2"
 
+deepclone@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/deepclone/-/deepclone-1.0.2.tgz#1f38ec4d9214134997d03f92c7856fa97442bb74"
+  integrity sha512-qkPxF/vo0TBGDJYg9BI2V7nT4NdhFc7XIN/hZ840gkcGqT84l6dulLosaO15zkkDJRIGmTN2zdBzticBAD4aRA==
+
 denque@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/denque/-/denque-2.1.0.tgz#e93e1a6569fb5e66f16a3c2a2964617d349d6ab1"
