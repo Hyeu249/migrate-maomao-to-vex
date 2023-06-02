@@ -21,7 +21,7 @@ services:
       - "3306:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=test
-      - MARIADB_DATABASE=vsico_api
+      - MARIADB_DATABASE=maomao-vsico
     volumes:
       - ./dbinit:/docker-entrypoint-initdb.d/
     networks:
