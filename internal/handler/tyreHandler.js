@@ -15,11 +15,12 @@ async function migrateTyreHandler() {
     if ([err1, err2].some(notNull)) throw Error("Error when connecting to db");
 
     const queryTyre = `
-    SELECT tbl_tires.update_date, tbl_tire_name.tire_short_name, tbl_admin_tires_production.tire_production, tbl_admin_tires_size.tire_size_name, tbl_tires.tire_serial, tbl_tires.tire_distance_limit
+    SELECT tbl_tires.update_date, tbl_tire_name.tire_short_name, tbl_admin_tires_production.tire_production, tbl_admin_tires_size.tire_size_name, tbl_tires.tire_serial, tbl_tires.tire_distance_limit, tbl_user.full_name, tbl_user.user_id
     FROM tbl_tires 
     LEFT JOIN tbl_tire_name on tbl_tires.tire_name_id = tbl_tire_name.tire_name_id
     LEFT JOIN tbl_admin_tires_production on tbl_tire_name.tire_name = tbl_admin_tires_production.tire_name_id
     LEFT JOIN tbl_admin_tires_size on tbl_tire_name.tire_size_id = tbl_admin_tires_size.tire_size_id
+    LEFT JOIN tbl_user on tbl_user.user_id = tbl_tires.tire_create_user
     `;
 
     const tyreTbMaomao = await maomaoDb.query(queryTyre, { type: QueryTypes.SELECT });
@@ -28,7 +29,7 @@ async function migrateTyreHandler() {
     const HCMorHN = warehouseTbVex.filter((e) => e.name.includes("HỒ CHÍ MINH") || e.name.includes("HÀ NỘI"));
 
     for (const [i, record] of tyreTbMaomao.entries()) {
-      const asset_warehouse_id = HCMorHN[getRandomNumber(HCMorHN.length - 1)].id;
+      const asset_warehouse_id = getWareHouseIdByUserId(record.user_id);
       // if (i !== 1) continue;
       const tyre_id = uuidv4();
 
@@ -44,7 +45,7 @@ async function migrateTyreHandler() {
         name: record.tire_production || "Không có",
         short_name: record.tire_short_name || "Không có",
         specification: record.tire_size_name || "Không có",
-        serial_no: record.tire_serial + "-" + i,
+        serial_no: record.tire_serial,
         operation_limit_km: record.tire_distance_limit,
         replace_noti_max_threshold_km: 1000,
 
@@ -70,3 +71,15 @@ async function migrateTyreHandler() {
 }
 
 module.exports = migrateTyreHandler;
+
+function getWareHouseIdByUserId(user_id) {
+  const hanoi_id = "54d9fd51-0db9-4319-99f2-9574605c3334";
+  const haiphong_id = "536358be-f2ca-44bc-b1d6-4088ae767e92";
+  const warehouse_ids = {
+    679: hanoi_id,
+    686: hanoi_id,
+    785: haiphong_id,
+  };
+
+  return warehouse_ids[user_id] || hanoi_id;
+}
